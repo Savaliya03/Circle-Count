@@ -3,45 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle Detection</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+    <title>Circle Detection App - AI Powered Image Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-container img {
+            transition: transform 0.3s ease;
+        }
+        
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        .upload-zone {
+            background: linear-gradient(145deg, #f0f4f8, #e2e8f0);
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: linear-gradient(145deg, #edf2f7, #e2e8f0);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="max-w-3xl mx-auto py-10">
-        <h1 class="text-3xl font-bold text-center text-blue-500 mb-5">Circle Detection in Images</h1>
-        <div class="bg-white p-6 rounded shadow-md">
-            <form method="post" enctype="multipart/form-data" class="space-y-4">
-                {% csrf_token %}
-                {{ form.image.label_tag }}
-                {{ form.image }}
-                {% if form.image.help_text %}
-                    <small class="text-gray-500">{{ form.image.help_text }}</small>
-                {% endif %}
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header with Gradient Background -->
+    <header class="gradient-bg text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="relative z-10 max-w-6xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 fade-in">
+                Circle Detection AI
+            </h1>
+            <p class="text-xl md:text-2xl font-light opacity-90 fade-in">
+                Advanced computer vision powered by OpenCV
+            </p>
+            <div class="mt-8 fade-in">
+                <span class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 text-sm font-medium">
+                    🔍 Detect • 📊 Analyze • 🎯 Visualize
+                </span>
+            </div>
+        </div>
+        
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full"></div>
+            <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-white opacity-10 rounded-full"></div>
+        </div>
+    </header>
 
-                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Upload and Detect</button>
-            </form>
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <!-- Upload Section -->
+        <section class="mb-12">
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 hover-scale transition-transform duration-300">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        Upload Your Image
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Choose an image containing circular objects for AI-powered detection
+                    </p>
+                </div>
 
-            {% if success %}
-                <div class="mt-5">
-                    <h2 class="text-xl font-semibold text-green-500 mb-2">Detection Results</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h3 class="font-medium text-gray-700">Original Image</h3>
-                            <img src="{{ original_image_url }}" alt="Original Image" class="w-full h-auto mt-2">
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="upload-zone rounded-xl p-8 text-center">
+                        <div class="mb-4">
+                            <svg class="mx-auto h-16 w-16 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
                         </div>
-                        <div>
-                            <h3 class="font-medium text-gray-700">Processed Image</h3>
-                            <img src="{{ processed_image_url }}" alt="Processed Image" class="w-full h-auto mt-2">
+                        
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                        
+                        {% if form.image.help_text %}
+                            <p class="text-sm text-gray-500 mt-2">{{ form.image.help_text }}</p>
+                        {% endif %}
+                        
+                        <p class="text-sm text-gray-400 mt-4">
+                            Supported formats: JPG, PNG, BMP, TIFF • Max size: 10MB
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" 
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-12 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                            <span class="flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Analyze Image
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        {% if success %}
+        <section class="slide-up">
+            <!-- Stats Card -->
+            <div class="stats-card rounded-2xl p-8 text-white mb-8 text-center">
+                <h3 class="text-2xl font-bold mb-2">Detection Complete!</h3>
+                <div class="text-5xl font-bold mb-2">{{ circle_count }}</div>
+                <p class="text-xl opacity-90">
+                    Circle{{ circle_count|pluralize }} Detected
+                </p>
+            </div>
+
+            <!-- Image Comparison -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                <h3 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+                    Analysis Results
+                </h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Original Image -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xl font-semibold text-gray-700">Original Image</h4>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                                Input
+                            </span>
+                        </div>
+                        <div class="image-container">
+                            <img src="{{ original_image_url }}" alt="Original Image" 
+                                class="w-full h-auto rounded-xl">
                         </div>
                     </div>
-                    <p class="mt-4 text-lg text-gray-800">Total Circles Detected: <span class="font-bold">{{ circle_count }}</span></p>
+
+                    <!-- Processed Image -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xl font-semibold text-gray-700">Processed Image</h4>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                                Analyzed
+                            </span>
+                        </div>
+                        <div class="image-container">
+                            <img src="{{ processed_image_url }}" alt="Processed Image" 
+                                class="w-full h-auto rounded-xl">
+                        </div>
+                    </div>
                 </div>
-            {% elif error %}
-                <div class="mt-5">
-                    <p class="text-red-500 font-bold">{{ error }}</p>
+
+                <!-- Detection Details -->
+                <div class="mt-12 bg-gray-50 rounded-xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Detection Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-600">{{ circle_count }}</div>
+                            <div class="text-sm text-gray-600">Circles Found</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-600">✓</div>
+                            <div class="text-sm text-gray-600">AI Processed</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-green-600">🎯</div>
+                            <div class="text-sm text-gray-600">High Accuracy</div>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
+
+                <!-- Try Another Button -->
+                <div class="text-center mt-8">
+                    <a href="/" 
+                        class="inline-flex items-center bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded-xl transition-colors duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Analyze Another Image
+                    </a>
+                </div>
+            </div>
+        </section>
+        {% elif error %}
+        <section class="slide-up">
+            <div class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                <div class="text-red-600 mb-4">
+                    <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-red-800 mb-2">Processing Error</h3>
+                <p class="text-red-600">{{ error }}</p>
+                <a href="/" class="inline-block mt-4 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300">
+                    Try Again
+                </a>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Features Section -->
+        {% if not success and not error %}
+        <section class="mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">How It Works</h2>
+                <p class="text-gray-600 text-lg">Advanced computer vision technology in three simple steps</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Upload</h3>
+                    <p class="text-gray-600">Upload your image containing circular objects</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Analyze</h3>
+                    <p class="text-gray-600">AI processes the image using advanced algorithms</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Results</h3>
+                    <p class="text-gray-600">Get detailed analysis with visual highlights</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-20">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold mb-2">Circle Detection AI</h3>
+                <p class="text-gray-400">Powered by OpenCV and advanced computer vision</p>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8">
+                <p class="text-gray-400">
+                    &copy; 2025 Circle Detection App. Built with Django, OpenCV, and Tailwind CSS.
+                </p>
+            </div>
         </div>
-    </div>
+    </footer>
+
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(section);
+            });
+        });
+    </script>
 </body>
 </html>

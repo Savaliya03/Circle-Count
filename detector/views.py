@@ -54,7 +54,8 @@ def index(request):
     Main view that handles both GET (display form) and POST (process image) requests.
     
     GET: Display the upload form
-    POST: Process uploaded image and display results
+    POST: Process uploaded image and display results 
+    
     """
     context = {'form': ImageUploadForm()}
     
