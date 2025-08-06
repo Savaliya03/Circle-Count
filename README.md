@@ -1,173 +1,174 @@
-****⭕ Advanced Circle Detection Web Application****
+# ⭕ Advanced Circle Detection Web Application
 
-This project is a Django-based web application that allows users to upload images and detect circles within them using advanced computer vision techniques. It leverages sophisticated preprocessing, multi-scale Hough Circle Transform, and robust post-processing to achieve high precision in circle detection.
+A Django-based web application that enables users to upload images and automatically detect circles using advanced computer vision techniques. The system incorporates preprocessing, multi-scale Hough Circle Transform, and robust post-processing (including NMS and scoring) for highly accurate results.
 
+---
 
-**✨ Features**
+## 📌 Table of Contents
+- [✨ Features](#-features)
+- [🚀 Technologies Used](#-technologies-used)
+- [🛠️ Setup Instructions](#-setup-instructions)
+- [⚙️ How It Works – Image Processing Pipeline](#-how-it-works--image-processing-pipeline)
+- [📷 Demo Screenshot (Optional)](#-demo-screenshot-optional)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [👤 Author](#-author)
+- [📬 Contact](#-contact)
 
-🖼️ Image Upload – Upload images through a user-friendly web interface.
+---
 
-🧪 Advanced Preprocessing – CLAHE, Bilateral Filtering, and Morphological Operations for optimal input enhancement.
+## ✨ Features
 
-🔍 Multi-Scale Circle Detection – Detects circles using multiple sets of Hough Circle Transform parameters.
+- 🖼️ **Image Upload** – Simple web interface for uploading images.
+- 🧪 **Advanced Preprocessing** – Uses CLAHE, Bilateral Filtering, Gaussian Blur, and Morphological operations.
+- 🔍 **Multi-Scale Circle Detection** – Uses different `cv2.HoughCircles()` parameter sets to detect varied circle sizes and contrasts.
+- 🧠 **Duplicate Removal (NMS)** – Applies Non-Maximum Suppression and circle quality scoring to eliminate overlaps.
+- 👁️ **Visual Output** – Highlights detected circles on the image for intuitive verification.
+- ⚠️ **Error Handling** – Detects and handles invalid inputs, oversized files, and processing issues.
+- 🚀 **Performance Optimized** – Automatically resizes large images to prevent memory overload and lag.
 
-🧠 Duplicate Removal (NMS) – Applies quality scoring and Non-Maximum Suppression to remove overlapping or redundant circles.
+---
 
-👁️ Visual Output – Displays both original and processed image with circles highlighted.
+## 🚀 Technologies Used
 
-⚠️ Error Handling – Handles invalid formats, large images, and runtime errors.
+| Technology   | Description                            |
+|--------------|----------------------------------------|
+| Python 3.8+  | Programming Language                    |
+| Django       | Web Framework                           |
+| OpenCV       | Image processing & HoughCircles         |
+| NumPy        | Matrix and image data handling          |
+| Pillow (PIL) | Image format handling and conversion    |
 
-🚀 Performance Optimized – Automatically resizes large images to avoid performance issues.
+---
 
+## 🛠️ Setup Instructions
 
-**🚀 Technologies Used**
+### ✅ Prerequisites
+- Python 3.8 or higher
+- `pip` (Python package manager)
 
-Python 3.8+
+---
 
-Django – Web framework
+### 🧩 Installation Guide
 
-OpenCV (cv2) – Image processing and circle detection
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/vatsalsavaliya/circle-detection-app.git
+   cd circle-detection-app
 
-NumPy – Numerical image operations
+2.  **Create and Activate Virtual Environment**
 
-Pillow (PIL) – Image loading and format support
+    * **Windows:**
+        ```bash
+        python -m venv venv
+        .\venv\Scripts\activate
+        ```
 
+    * **macOS/Linux:**
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate
+        ```
 
-**🛠️ Setup Instructions**
 
-✅ Prerequisites
-Python 3.8+
+3.  **Install Dependencies**
 
-pip (Python package manager)
+    ```bash
+    pip install django opencv-python numpy Pillow
+    ```
 
 
-🔧 **Installation**
+4.  **Apply Migrations**
 
-1.Clone the Repository
+    ```bash
+    cd circle_detection_app
+    python manage.py migrate
+    ```
 
-git clone https://github.com/vatsalsavaliya/circle-detection-app.git
-cd circle-detection-app
 
-2.Create and Activate Virtual Environment
-Windows:
 
-python -m venv venv
-.\venv\Scripts\activate
+5.  **Create Media Folders**
 
-macOS/Linux:
+    ```bash
+    mkdir -p media/processed
+    ```
 
-python3 -m venv venv
-source venv/bin/activate
 
-3.Install Dependencies
 
-pip install django opencv-python numpy Pillow
 
-4.Apply Django Migrations
 
-cd circle_detection_app
-python manage.py migrate
+6.  **Run the Development Server**
 
-5.Create Media Directories
+    ```bash
+    python manage.py runserver
+    ```
 
-mkdir -p media/processed
 
-6.Run the Development Server
 
-python manage.py runserver
+7.  Access the Web App
+		Visit: http://127.0.0.1:8000/
 
-7.Access the Application
-Open your browser and go to:
-http://127.0.0.1:8000/
 
 
-**⚙️ How It Works – Image Processing Pipeline**
 
-🔄 process_image_with_error_handling()
 
-1.validate_and_prepare_image
+⚙️ How It Works – Image Processing Pipeline
+1️⃣ process_image_with_error_handling()
+Main entry point for image processing with validation and exceptions.
 
-Loads the image using Pillow.
+2️⃣ validate_and_prepare_image()
+Loads image using PIL.
 
-Converts to OpenCV BGR format.
+Converts to OpenCV-compatible format.
 
-Validates and resizes large images (>2000x2000 px).
+Validates size and resizes if >2000x2000 pixels.
 
-2.enhanced_preprocessing
+3️⃣ enhanced_preprocessing()
+Converts image to grayscale.
 
-Converts to grayscale.
+Applies:
 
-Applies CLAHE for contrast enhancement.
+CLAHE (Contrast Limited Adaptive Histogram Equalization)
 
-Uses Bilateral Filter and Gaussian Blur.
+Bilateral Filter (for noise reduction)
 
-Applies Morphological Operations.
+Gaussian Blur
 
-3.advanced_circle_detection
+Morphological operations (opening/closing)
 
-Runs cv2.HoughCircles() with multiple configurations.
+4️⃣ advanced_circle_detection()
+Runs HoughCircles with multiple parameter sets.
 
-Detects circles of varying sizes and strengths.
+Adjusts minDist, param1, param2, minRadius, and maxRadius.
 
-Tunes minDist to avoid nearby duplicate detections.
+5️⃣ remove_duplicate_circles()
+Uses calculate_circle_quality() for each circle.
 
-4.remove_duplicate_circles()
+Applies Non-Maximum Suppression to remove overlaps.
 
-Scores each circle with calculate_circle_quality().
+6️⃣ calculate_circle_quality()
+Based on:
 
-Applies NMS to select high-quality, non-overlapping circles.
+Edge Density
 
-5.calculate_circle_quality()
+Intensity Uniformity
 
-Edge Density: Strength of edges along the circle.
+Radius Reasonableness
 
-Intensity Uniformity: Brightness consistency within the circle.
+7️⃣ Visualization
+Draws circles on image with different colors and center markers.
 
-Radius Reasonableness: How close the radius is to expected values.
 
-6.Visualization
 
-Circles are drawn with unique colors on the processed image.
 
-
-**📷 Demo Screenshot (Optional)**
-
-You can add a screenshot here showing before/after detection results.
-
-
-**🤝 Contributing**
-
-We welcome contributions!
-
-Fork the repository
-
-Create a new branch
-
-Make your changes
-
-Submit a pull request
-
-
-**📄 License**
-
-This project is licensed under the MIT License.
-Feel free to use, modify, and distribute it.
-
-
-**👤 Author**
-
+👤 Author
 Vatsal Hareshbhai Savaliya
-🎓 B.Tech (Information Technology), 7th Semester
-📍 Anand Agricultural University, Gujarat, India
+🎓 B.Tech in Information Technology (7th Semester)
+🏫 Anand Agricultural University, Gujarat, India
 📧 Email: vatsalsavaliya03@gmail.com
 🔗 GitHub: https://github.com/Savaliya03
 🔗 LinkedIn: https://www.linkedin.com/in/vatsal-savaliya-587bab281
 
 
-**📬 Contact**
+💬 Open an Issue on GitHub
 
-For queries, suggestions, or feedback:
-
-Open an issue on this repo
-
-Email me directly at vatsalsavaliya03@gmail.com
