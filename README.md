@@ -9,11 +9,7 @@ A Django-based web application that enables users to upload images and automatic
 - [🚀 Technologies Used](#-technologies-used)
 - [🛠️ Setup Instructions](#-setup-instructions)
 - [⚙️ How It Works – Image Processing Pipeline](#-how-it-works--image-processing-pipeline)
-- [📷 Demo Screenshot (Optional)](#-demo-screenshot-optional)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
 - [👤 Author](#-author)
-- [📬 Contact](#-contact)
 
 ---
 
