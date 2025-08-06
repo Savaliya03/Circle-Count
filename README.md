@@ -111,10 +111,13 @@ A Django-based web application that enables users to upload images and automatic
 
 
 
+---
 
-⚙️ How It Works – Image Processing Pipeline
+**⚙️ How It Works – Image Processing Pipeline**
+
 1️⃣ process_image_with_error_handling()
 Main entry point for image processing with validation and exceptions.
+
 
 2️⃣ validate_and_prepare_image()
 Loads image using PIL.
@@ -122,6 +125,7 @@ Loads image using PIL.
 Converts to OpenCV-compatible format.
 
 Validates size and resizes if >2000x2000 pixels.
+
 
 3️⃣ enhanced_preprocessing()
 Converts image to grayscale.
@@ -136,15 +140,18 @@ Gaussian Blur
 
 Morphological operations (opening/closing)
 
+
 4️⃣ advanced_circle_detection()
 Runs HoughCircles with multiple parameter sets.
 
 Adjusts minDist, param1, param2, minRadius, and maxRadius.
 
+
 5️⃣ remove_duplicate_circles()
 Uses calculate_circle_quality() for each circle.
 
 Applies Non-Maximum Suppression to remove overlaps.
+
 
 6️⃣ calculate_circle_quality()
 Based on:
@@ -155,6 +162,7 @@ Intensity Uniformity
 
 Radius Reasonableness
 
+
 7️⃣ Visualization
 Draws circles on image with different colors and center markers.
 
@@ -164,9 +172,13 @@ Draws circles on image with different colors and center markers.
 👤 Author
 Vatsal Hareshbhai Savaliya
 🎓 B.Tech in Information Technology (7th Semester)
+
 🏫 Anand Agricultural University, Gujarat, India
+
 📧 Email: vatsalsavaliya03@gmail.com
+
 🔗 GitHub: https://github.com/Savaliya03
+
 🔗 LinkedIn: https://www.linkedin.com/in/vatsal-savaliya-587bab281
 
 
