@@ -1,4 +1,6 @@
-⭕ Advanced Circle Detection Web Application
+**⭕ Advanced Circle Detection Web Application**
+
+
 This project is a Django-based web application that allows users to upload images and detect circles within them using advanced computer vision techniques. It employs sophisticated preprocessing, multi-scale Hough Circle Transform, and robust post-processing to achieve high precision in circle detection.
 
 ✨ Features
