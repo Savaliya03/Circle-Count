@@ -1,130 +1,151 @@
-**⭕ Advanced Circle Detection Web Application**
-
-
-This project is a Django-based web application that allows users to upload images and detect circles within them using advanced computer vision techniques. It employs sophisticated preprocessing, multi-scale Hough Circle Transform, and robust post-processing to achieve high precision in circle detection.
+****⭕ Advanced Circle Detection Web Application****
+This project is a Django-based web application that allows users to upload images and detect circles within them using advanced computer vision techniques. It leverages sophisticated preprocessing, multi-scale Hough Circle Transform, and robust post-processing to achieve high precision in circle detection.
 
 ✨ Features
-Image Upload: Easily upload images through a user-friendly web interface.
+🖼️ Image Upload – Upload images through a user-friendly web interface.
 
-Advanced Preprocessing: Images undergo adaptive contrast enhancement (CLAHE), noise reduction (Bilateral Filtering), and morphological operations to optimize them for circle detection.
+🧪 Advanced Preprocessing – CLAHE, Bilateral Filtering, and Morphological Operations for optimal input enhancement.
 
-Multi-Scale Circle Detection: Utilizes the Hough Circle Transform with multiple parameter sets to detect circles of varying sizes and clarity.
+🔍 Multi-Scale Circle Detection – Detects circles using multiple sets of Hough Circle Transform parameters.
 
-Robust Duplicate Removal: Implements a quality-scoring system and Non-Maximum Suppression (NMS) to eliminate redundant or overlapping circle detections, ensuring a clean output.
+🧠 Duplicate Removal (NMS) – Applies quality scoring and Non-Maximum Suppression to remove overlapping or redundant circles.
 
-Visual Output: Displays the original image alongside the processed image with detected circles, their centers, and radii highlighted.
+👁️ Visual Output – Displays both original and processed image with circles highlighted.
 
-Error Handling: Comprehensive error handling for invalid image formats, sizes, and processing failures.
+⚠️ Error Handling – Handles invalid formats, large images, and runtime errors.
 
-Performance Optimization: Includes image resizing for very large inputs to prevent performance bottlenecks.
+🚀 Performance Optimized – Automatically resizes large images to avoid performance issues.
 
 🚀 Technologies Used
-Django: Web framework for building the application.
-
-OpenCV (cv2): Core library for image processing and circle detection.
-
-NumPy: Essential for numerical operations, especially with image arrays.
-
-Pillow (PIL): Used for robust image loading and format handling.
-
-Python: The primary programming language.
-
-🛠️ Setup Instructions
-Follow these steps to get the project up and running on your local machine.
-
-Prerequisites
 Python 3.8+
 
-pip (Python package installer)
+Django – Web framework
 
-Installation Steps
-Clone the Repository (if applicable):
+OpenCV (cv2) – Image processing and circle detection
 
-git clone <your-repository-url>
-cd <your-project-directory>
+NumPy – Numerical image operations
 
-Create a Virtual Environment (Recommended):
+Pillow (PIL) – Image loading and format support
+
+🛠️ Setup Instructions
+✅ Prerequisites
+Python 3.8+
+
+pip (Python package manager)
+
+🔧 **Installation**
+Clone the Repository
+
+git clone https://github.com/vatsalsavaliya/circle-detection-app.git
+cd circle-detection-app
+
+Create and Activate Virtual Environment
+Windows:
 
 python -m venv venv
-
-Activate the Virtual Environment:
-
-On Windows:
-
 .\venv\Scripts\activate
 
-On macOS/Linux:
+macOS/Linux:
 
+python3 -m venv venv
 source venv/bin/activate
 
-Install Dependencies:
+Install Dependencies
 
 pip install django opencv-python numpy Pillow
 
-Set up Django Project:
+Apply Django Migrations
 
-Navigate into your Django project directory (where manage.py is located):
-
-cd your_django_project_name # e.g., cd circle_detector_app
-
-Apply migrations:
-
+cd circle_detection_app
 python manage.py migrate
 
-Create Media Directories:
-Ensure you have media and media/processed directories in your project's root (or as configured in settings.py) for storing uploaded and processed images.
+Create Media Directories
 
 mkdir -p media/processed
 
-Run the Development Server:
+Run the Development Server
 
 python manage.py runserver
 
-The application will be accessible at http://127.0.0.1:8000/.
+Access the Application
+Open your browser and go to:
+http://127.0.0.1:8000/
 
-💡 How It Works
-The core of the circle detection is handled by the process_image_with_error_handling function, which orchestrates the following steps:
+⚙️ How It Works – Image Processing Pipeline
+🔄 process_image_with_error_handling()
+validate_and_prepare_image
 
-validate_and_prepare_image:
+Loads the image using Pillow.
 
-Loads the image using Pillow for broad format support.
+Converts to OpenCV BGR format.
 
-Converts the image to OpenCV's BGR format.
+Validates and resizes large images (>2000x2000 px).
 
-Performs basic validation (e.g., minimum dimensions) and resizes very large images to a manageable size (e.g., max 2000x2000 pixels) to prevent performance issues.
+enhanced_preprocessing
 
-enhanced_preprocessing:
+Converts to grayscale.
 
-Converts the image to grayscale.
+Applies CLAHE for contrast enhancement.
 
-Applies CLAHE (Contrast Limited Adaptive Histogram Equalization) to improve local contrast, especially in images with varying lighting.
+Uses Bilateral Filter and Gaussian Blur.
 
-Uses Adaptive Bilateral Filtering for noise reduction, which is excellent at smoothing images while preserving sharp edges—crucial for circle detection.
+Applies Morphological Operations.
 
-Performs light Gaussian Blurring and Morphological Operations (Opening and Closing) to further clean the image and remove small artifacts.
+advanced_circle_detection
 
-advanced_circle_detection:
+Runs cv2.HoughCircles() with multiple configurations.
 
-Applies the Hough Circle Transform (cv2.HoughCircles) using multiple sets of parameters (dp, param1, param2, minDist, minRadius, maxRadius). This multi-strategy approach helps in detecting circles under different conditions (e.g., faint, clear, various sizes).
+Detects circles of varying sizes and strengths.
 
-minDist is carefully tuned to prevent multiple detections of the same circle.
+Tunes minDist to avoid nearby duplicate detections.
 
-remove_duplicate_circles (Non-Maximum Suppression - NMS): This critical step filters out redundant circle detections. It first scores each detected circle based on its quality (using calculate_circle_quality) and then iteratively selects the highest-quality circles, suppressing any overlapping lower-quality detections.
+remove_duplicate_circles()
 
-calculate_circle_quality:
+Scores each circle with calculate_circle_quality().
 
-Evaluates a circle's quality based on:
+Applies NMS to select high-quality, non-overlapping circles.
 
-Edge Density: How well the circle's perimeter aligns with strong edges in the image.
+calculate_circle_quality()
 
-Intensity Uniformity: How consistent the pixel intensities are within the circle.
+Edge Density: Strength of edges along the circle.
 
-Radius Reasonableness: A score based on how close the detected radius is to an expected ideal radius.
+Intensity Uniformity: Brightness consistency within the circle.
 
-Drawing Results: The detected circles (with their centers and radii) are drawn onto a copy of the original image using distinct colors for better visualization.
+Radius Reasonableness: How close the radius is to expected values.
+
+Visualization
+
+Circles are drawn with unique colors on the processed image.
+
+📷 Demo Screenshot (Optional)
+You can add a screenshot here showing before/after detection results.
 
 🤝 Contributing
-Contributions are welcome! If you have suggestions for improvements or bug fixes, please open an issue or submit a pull request.
+We welcome contributions!
+
+Fork the repository
+
+Create a new branch
+
+Make your changes
+
+Submit a pull request
 
 📄 License
-This project is open-source and available under the MIT License.
+This project is licensed under the MIT License.
+Feel free to use, modify, and distribute it.
+
+👤 Author
+Vatsal Hareshbhai Savaliya
+🎓 B.Tech (Information Technology), 7th Semester
+📍 Anand Agricultural University, Gujarat, India
+📧 Email: vatsalsavaliya03@gmail.com
+🔗 GitHub: https://github.com/Savaliya03
+🔗 LinkedIn: https://www.linkedin.com/in/vatsal-savaliya-587bab281
+
+📬 Contact
+For queries, suggestions, or feedback:
+
+Open an issue on this repo
+
+Email me directly at vatsalsavaliya03@gmail.com
