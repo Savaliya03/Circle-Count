@@ -49,7 +49,7 @@ A Django-based web application that enables users to upload images and automatic
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/vatsalsavaliya/circle-detection-app.git
+   git clone https://github.com/YourUsername/circle-detection-app.git
    cd circle-detection-app
 
 2.  **Create and Activate Virtual Environment**
